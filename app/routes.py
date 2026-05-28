@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
-from sqlalchemy import func
+from sqlalchemy import func, nullslast
 from sqlalchemy.exc import IntegrityError
 
 from app import db
@@ -25,6 +25,7 @@ def index():
     active_categories = {c for c in raw_categories if c > 0}
     raw_max_drink = request.args.get("max_drink", type=int)
     max_drink_price = raw_max_drink if raw_max_drink in DRINK_PRICE_THRESHOLDS else None
+    active_sort = request.args.get("sort") if request.args.get("sort") in ("rating_desc", "rating_asc") else None
 
     avg_sub = (
         db.select(
@@ -56,8 +57,14 @@ def index():
         )
         .outerjoin(avg_sub, Restaurant.id == avg_sub.c.restaurant_id)
         .outerjoin(min_drink_sub, Restaurant.id == min_drink_sub.c.restaurant_id)
-        .order_by(Restaurant.name)
     )
+
+    if active_sort == "rating_desc":
+        query = query.order_by(nullslast(avg_sub.c.avg_rating.desc()))
+    elif active_sort == "rating_asc":
+        query = query.order_by(nullslast(avg_sub.c.avg_rating.asc()))
+    else:
+        query = query.order_by(Restaurant.name)
 
     if active_categories:
         query = query.where(Restaurant.category_id.in_(active_categories))
@@ -74,6 +81,7 @@ def index():
         active_categories=active_categories,
         max_drink_price=max_drink_price,
         drink_thresholds=DRINK_PRICE_THRESHOLDS,
+        active_sort=active_sort,
     )
 
 

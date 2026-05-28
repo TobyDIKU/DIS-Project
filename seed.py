@@ -258,23 +258,33 @@ FOOD_TEMPLATES: dict[str, dict[str, list]] = {
 }
 
 # (name, description, is_alcoholic, volume_ml, is_hot, base_price_dkk)
-BEVERAGE_TEMPLATES = [
-    ("Still Water",     None,                               False, None, False, Decimal("20")),
-    ("Sparkling Water", None,                               False,  330, False, Decimal("25")),
-    ("Cola",            "Ice-cold classic",                 False,  330, False, Decimal("30")),
-    ("Lemonade",        "Freshly squeezed with mint",       False, None, False, Decimal("35")),
-    ("Orange Juice",    "Fresh-squeezed",                   False,  250, False, Decimal("35")),
-    ("Iced Tea",        "Peach or lemon",                   False,  330, False, Decimal("35")),
-    ("Filter Coffee",   None,                               False,  250, True,  Decimal("30")),
-    ("Americano",       None,                               False,  250, True,  Decimal("35")),
-    ("Flat White",      "Double espresso with steamed milk", False, 200, True,  Decimal("40")),
-    ("Oat Latte",       "Espresso with oat milk",           False,  300, True,  Decimal("45")),
-    ("Chai Latte",      "Spiced tea with steamed milk",     False,  300, True,  Decimal("45")),
-    ("Matcha Latte",    "Ceremonial grade matcha with oat milk", False, 300, True, Decimal("50")),
-    ("Danish Lager",    "Crisp local draft lager",          True,   330, False, Decimal("50")),
-    ("Craft IPA",       "Local craft India Pale Ale",       True,   330, False, Decimal("60")),
-    ("House Red Wine",  "Glass of house red",               True,   150, False, Decimal("60")),
-    ("House White Wine","Glass of house white",             True,   150, False, Decimal("60")),
+# Tier multipliers: 1→×0.85, 2→×1.00, 3→×1.25
+# "House Draft Beer" (base 28): tier1=23.80, tier2=28.00, tier3=35.00
+# "Table Beer"       (base 35): tier1=29.75, tier2=35.00, tier3=43.75
+# → Under-30 filter catches tier1+tier2 (House Draft) and tier1 (Table Beer)
+# → Under-40 filter additionally catches tier3 (House Draft) and tier1+tier2 (Table Beer)
+NON_ALCOHOLIC_TEMPLATES = [
+    ("Still Water",     None,                                    False, None, False, Decimal("20")),
+    ("Sparkling Water", None,                                    False,  330, False, Decimal("25")),
+    ("Cola",            "Ice-cold classic",                      False,  330, False, Decimal("30")),
+    ("Lemonade",        "Freshly squeezed with mint",            False, None, False, Decimal("35")),
+    ("Orange Juice",    "Fresh-squeezed",                        False,  250, False, Decimal("35")),
+    ("Iced Tea",        "Peach or lemon",                        False,  330, False, Decimal("35")),
+    ("Filter Coffee",   None,                                    False,  250, True,  Decimal("30")),
+    ("Americano",       None,                                    False,  250, True,  Decimal("35")),
+    ("Flat White",      "Double espresso with steamed milk",     False,  200, True,  Decimal("40")),
+    ("Oat Latte",       "Espresso with oat milk",                False,  300, True,  Decimal("45")),
+    ("Chai Latte",      "Spiced tea with steamed milk",          False,  300, True,  Decimal("45")),
+    ("Matcha Latte",    "Ceremonial grade matcha with oat milk", False,  300, True,  Decimal("50")),
+]
+
+ALCOHOLIC_TEMPLATES = [
+    ("House Draft Beer", "Refreshing 500ml draught beer",        True,  500, False, Decimal("28")),
+    ("Table Beer",       "Light 330ml beer, great with food",    True,  330, False, Decimal("35")),
+    ("Danish Lager",     "Crisp local draft lager",              True,  330, False, Decimal("50")),
+    ("Craft IPA",        "Local craft India Pale Ale",           True,  330, False, Decimal("60")),
+    ("House Red Wine",   "Glass of house red",                   True,  150, False, Decimal("60")),
+    ("House White Wine", "Glass of house white",                 True,  150, False, Decimal("60")),
 ]
 
 # ── Restaurants ───────────────────────────────────────────────────────────────
@@ -476,7 +486,10 @@ def seed() -> None:
                     meal_type=meal_type,
                 ))
 
-        chosen_beverages = random.sample(BEVERAGE_TEMPLATES, random.randint(3, 5))
+        chosen_beverages = (
+            random.sample(ALCOHOLIC_TEMPLATES, random.randint(1, 2))
+            + random.sample(NON_ALCOHOLIC_TEMPLATES, random.randint(2, 3))
+        )
         for bname, bdesc, balc, bvol, bhot, bbase in chosen_beverages:
             db.session.add(Beverage(
                 restaurant=r,

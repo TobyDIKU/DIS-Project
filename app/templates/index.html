@@ -52,7 +52,37 @@
         {% endfor %}
       </ul>
 
-      {% if active_categories or max_drink_price %}
+      <div class="filter-section-header sidebar-section-heading">
+        <h2>Sort by</h2>
+      </div>
+      <ul class="filter-list">
+        <li>
+          <label class="filter-check">
+            <input type="radio" name="sort" value=""
+                   {% if not active_sort %}checked{% endif %}
+                   onchange="this.form.submit()">
+            Name (A–Z)
+          </label>
+        </li>
+        <li>
+          <label class="filter-check">
+            <input type="radio" name="sort" value="rating_desc"
+                   {% if active_sort == 'rating_desc' %}checked{% endif %}
+                   onchange="this.form.submit()">
+            Rating: high to low
+          </label>
+        </li>
+        <li>
+          <label class="filter-check">
+            <input type="radio" name="sort" value="rating_asc"
+                   {% if active_sort == 'rating_asc' %}checked{% endif %}
+                   onchange="this.form.submit()">
+            Rating: low to high
+          </label>
+        </li>
+      </ul>
+
+      {% if active_categories or max_drink_price or active_sort %}
       <a class="clear-filters" href="{{ url_for('main.index') }}">✕ Clear filters</a>
       {% endif %}
 
