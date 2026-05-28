@@ -1,14 +1,18 @@
+from datetime import datetime, timedelta
+
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 
 from app import db
-from app.models import Beverage, Category, FoodItem, Restaurant, Review
+from app.models import Beverage, Category, FoodItem, Item, Restaurant, Review
 
 main_bp = Blueprint("main", __name__)
 
 MEAL_ORDER = ["appetizer", "main", "side", "dessert"]
+REVIEW_PERIODS = {"month": 30, "6months": 180, "year": 365}
+DRINK_PRICE_THRESHOLDS = [30, 40, 50]
 
 
 @main_bp.get("/")
@@ -17,7 +21,10 @@ def index():
         db.select(Category).order_by(Category.name)
     ).scalars().all()
 
-    category_id = request.args.get("category", type=int)
+    raw_categories = request.args.getlist("category", type=int)
+    active_categories = {c for c in raw_categories if c > 0}
+    raw_max_drink = request.args.get("max_drink", type=int)
+    max_drink_price = raw_max_drink if raw_max_drink in DRINK_PRICE_THRESHOLDS else None
 
     avg_sub = (
         db.select(
@@ -29,14 +36,34 @@ def index():
         .subquery()
     )
 
+    min_drink_sub = (
+        db.select(
+            Item.restaurant_id,
+            func.min(Item.price_dkk).label("min_drink_price"),
+        )
+        .join(Beverage, Item.id == Beverage.id)
+        .where(Beverage.is_alcoholic == True)
+        .group_by(Item.restaurant_id)
+        .subquery()
+    )
+
     query = (
-        db.select(Restaurant, avg_sub.c.avg_rating, avg_sub.c.review_count)
+        db.select(
+            Restaurant,
+            avg_sub.c.avg_rating,
+            avg_sub.c.review_count,
+            min_drink_sub.c.min_drink_price,
+        )
         .outerjoin(avg_sub, Restaurant.id == avg_sub.c.restaurant_id)
+        .outerjoin(min_drink_sub, Restaurant.id == min_drink_sub.c.restaurant_id)
         .order_by(Restaurant.name)
     )
 
-    if category_id:
-        query = query.where(Restaurant.category_id == category_id)
+    if active_categories:
+        query = query.where(Restaurant.category_id.in_(active_categories))
+
+    if max_drink_price:
+        query = query.where(min_drink_sub.c.min_drink_price <= max_drink_price)
 
     results = db.session.execute(query).all()
 
@@ -44,7 +71,9 @@ def index():
         "index.html",
         results=results,
         categories=categories,
-        active_category=category_id,
+        active_categories=active_categories,
+        max_drink_price=max_drink_price,
+        drink_thresholds=DRINK_PRICE_THRESHOLDS,
     )
 
 
@@ -66,18 +95,34 @@ def restaurant(id):
         .order_by(Beverage.name)
     ).scalars().all()
 
-    reviews = db.session.execute(
+    # Parse filters
+    raw_ratings = request.args.getlist("rating", type=int)
+    active_ratings = {n for n in raw_ratings if 1 <= n <= 5}
+    active_period = request.args.get("period") if request.args.get("period") in REVIEW_PERIODS else None
+
+    base_reviews_query = (
         db.select(Review)
         .where(Review.restaurant_id == id)
         .order_by(Review.created_at.desc())
-    ).scalars().all()
+    )
+
+    all_reviews = db.session.execute(base_reviews_query).scalars().all()
+
+    filtered_query = base_reviews_query
+    if active_ratings:
+        filtered_query = filtered_query.where(Review.rating.in_(active_ratings))
+    if active_period:
+        cutoff = datetime.utcnow() - timedelta(days=REVIEW_PERIODS[active_period])
+        filtered_query = filtered_query.where(Review.created_at >= cutoff)
+
+    reviews = db.session.execute(filtered_query).scalars().all()
 
     food_by_type = {}
     for item in food_items:
         food_by_type.setdefault(item.meal_type, []).append(item)
     food_groups = [(t, food_by_type[t]) for t in MEAL_ORDER if t in food_by_type]
 
-    avg_rating = round(sum(r.rating for r in reviews) / len(reviews), 1) if reviews else None
+    avg_rating = round(sum(rv.rating for rv in all_reviews) / len(all_reviews), 1) if all_reviews else None
 
     return render_template(
         "restaurant.html",
@@ -86,6 +131,9 @@ def restaurant(id):
         beverages=beverages,
         reviews=reviews,
         avg_rating=avg_rating,
+        total_review_count=len(all_reviews),
+        active_ratings=active_ratings,
+        active_period=active_period,
     )
 
 

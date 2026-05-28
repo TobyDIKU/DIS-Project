@@ -159,7 +159,7 @@ a:hover { text-decoration: underline; }
   align-items: start;
 }
 
-/* ── Category sidebar ───────────────────────────────────── */
+/* ── Filter sidebar ─────────────────────────────────────── */
 .category-sidebar {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -169,7 +169,9 @@ a:hover { text-decoration: underline; }
   top: 1.5rem;
 }
 
-.category-sidebar h2 {
+.filter-form { display: contents; }
+
+.filter-section-header h2 {
   font-size: .8rem;
   text-transform: uppercase;
   letter-spacing: .06em;
@@ -177,24 +179,35 @@ a:hover { text-decoration: underline; }
   margin-bottom: .75rem;
 }
 
-.category-sidebar ul { list-style: none; }
+.sidebar-section-heading {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
 
-.category-sidebar li + li { margin-top: .25rem; }
+.filter-list { list-style: none; }
+.filter-list li + li { margin-top: .2rem; }
 
-.category-sidebar a {
-  display: block;
-  padding: .35rem .6rem;
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .3rem .4rem;
   border-radius: var(--radius);
   font-size: .9rem;
-  color: var(--text);
+  cursor: pointer;
   transition: background .12s;
 }
-.category-sidebar a:hover { background: var(--bg); text-decoration: none; }
-.category-sidebar a.active {
-  background: var(--ku-red);
-  color: #fff;
-  font-weight: 600;
+.filter-check:hover { background: var(--bg); }
+.filter-check input { accent-color: var(--ku-red); cursor: pointer; }
+
+.clear-filters {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: .8rem;
+  color: var(--text-muted);
 }
+.clear-filters:hover { color: var(--ku-red); text-decoration: none; }
 
 /* ── Restaurant card grid ───────────────────────────────── */
 .restaurant-grid {
@@ -267,6 +280,13 @@ a:hover { text-decoration: underline; }
 .stars { color: #e6a817; letter-spacing: 1px; font-size: .85rem; }
 .rating-text { font-size: .8rem; color: var(--text-muted); }
 .no-reviews { font-size: .8rem; color: var(--text-muted); font-style: italic; }
+.drink-badge {
+  margin-left: auto;
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--ku-red);
+  white-space: nowrap;
+}
 
 /* ── Restaurant detail ──────────────────────────────────── */
 .back-link {
@@ -389,6 +409,64 @@ a:hover { text-decoration: underline; }
   font-size: .9rem;
   color: var(--text-muted);
   margin-bottom: 1.25rem;
+}
+
+/* ── Review filters ─────────────────────────────────────── */
+.review-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .75rem 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.rating-checks {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.rating-checks legend {
+  float: left;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-right: .5rem;
+  padding: 0;
+}
+
+.rating-check {
+  display: inline-flex;
+  align-items: center;
+  gap: .2rem;
+  font-size: .85rem;
+  cursor: pointer;
+}
+
+.rating-check input { accent-color: var(--ku-red); cursor: pointer; }
+
+.period-select {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.period-select select {
+  font-size: .85rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  padding: .2rem .4rem;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
 }
 
 /* ── Star picker ────────────────────────────────────────── */

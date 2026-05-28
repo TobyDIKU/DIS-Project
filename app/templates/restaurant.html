@@ -18,7 +18,7 @@
     {% if avg_rating %}
       <div class="avg-rating">
         <span class="stars-lg">{{ '★' * avg_rating|int }}{{ '☆' * (5 - avg_rating|int) }}</span>
-        <span>{{ avg_rating }} / 5 &nbsp;({{ reviews|length }} review{{ 's' if reviews|length != 1 }})</span>
+        <span>{{ avg_rating }} / 5 &nbsp;({{ total_review_count }} review{{ 's' if total_review_count != 1 }})</span>
       </div>
     {% else %}
       <p class="no-reviews">No reviews yet — be the first!</p>
@@ -107,6 +107,30 @@
     <p class="login-prompt"><a href="{{ url_for('auth.login') }}">Log in</a> to leave a review.</p>
     {% endif %}
 
+    <form class="review-filters" method="get">
+      <fieldset class="rating-checks">
+        <legend>Ratings</legend>
+        {% for n in [5, 4, 3, 2, 1] %}
+          <label class="rating-check">
+            <input type="checkbox" name="rating" value="{{ n }}"
+                   {% if n in active_ratings %}checked{% endif %}
+                   onchange="this.form.submit()">
+            {{ n }}★
+          </label>
+        {% endfor %}
+      </fieldset>
+      <label class="period-select">
+        From
+        <select name="period" onchange="this.form.submit()">
+          <option value="">All time</option>
+          <option value="month"   {% if active_period == 'month'   %}selected{% endif %}>Past month</option>
+          <option value="6months" {% if active_period == '6months' %}selected{% endif %}>Past 6 months</option>
+          <option value="year"    {% if active_period == 'year'    %}selected{% endif %}>Past year</option>
+        </select>
+      </label>
+      <noscript><button type="submit" class="btn">Apply</button></noscript>
+    </form>
+
     {% if reviews %}
     <ul class="review-list">
       {% for review in reviews %}
@@ -122,6 +146,8 @@
       </li>
       {% endfor %}
     </ul>
+    {% elif active_ratings or active_period %}
+      <p class="empty">No reviews match the selected filters.</p>
     {% else %}
       <p class="empty">No reviews yet.</p>
     {% endif %}

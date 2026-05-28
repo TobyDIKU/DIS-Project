@@ -10,28 +10,59 @@
 <div class="index-layout">
 
   <aside class="category-sidebar">
-    <h2>Categories</h2>
-    <ul>
-      <li>
-        <a href="{{ url_for('main.index') }}"
-           class="{% if not active_category %}active{% endif %}">
-          All
-        </a>
-      </li>
-      {% for cat in categories %}
-      <li>
-        <a href="{{ url_for('main.index', category=cat.id) }}"
-           class="{% if active_category == cat.id %}active{% endif %}">
-          {{ cat.name }}
-        </a>
-      </li>
-      {% endfor %}
-    </ul>
+    <form class="filter-form" method="get">
+
+      <div class="filter-section-header">
+        <h2>Categories</h2>
+      </div>
+      <ul class="filter-list">
+        {% for cat in categories %}
+        <li>
+          <label class="filter-check">
+            <input type="checkbox" name="category" value="{{ cat.id }}"
+                   {% if cat.id in active_categories %}checked{% endif %}
+                   onchange="this.form.submit()">
+            {{ cat.name }}
+          </label>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <div class="filter-section-header sidebar-section-heading">
+        <h2>Cheap Drinks</h2>
+      </div>
+      <ul class="filter-list">
+        <li>
+          <label class="filter-check">
+            <input type="radio" name="max_drink" value=""
+                   {% if not max_drink_price %}checked{% endif %}
+                   onchange="this.form.submit()">
+            Any price
+          </label>
+        </li>
+        {% for threshold in drink_thresholds %}
+        <li>
+          <label class="filter-check">
+            <input type="radio" name="max_drink" value="{{ threshold }}"
+                   {% if max_drink_price == threshold %}checked{% endif %}
+                   onchange="this.form.submit()">
+            🍺 Under {{ threshold }} kr
+          </label>
+        </li>
+        {% endfor %}
+      </ul>
+
+      {% if active_categories or max_drink_price %}
+      <a class="clear-filters" href="{{ url_for('main.index') }}">✕ Clear filters</a>
+      {% endif %}
+
+      <noscript><button class="btn btn-primary" type="submit">Apply</button></noscript>
+    </form>
   </aside>
 
   <section class="restaurant-grid">
     {% if results %}
-      {% for restaurant, avg_rating, review_count in results %}
+      {% for restaurant, avg_rating, review_count, min_drink_price in results %}
       <a class="restaurant-card" href="{{ url_for('main.restaurant', id=restaurant.id) }}">
         <div class="card-header">
           <span class="category-badge">{{ restaurant.category.name }}</span>
@@ -46,11 +77,14 @@
           {% else %}
             <span class="no-reviews">No reviews yet</span>
           {% endif %}
+          {% if min_drink_price %}
+            <span class="drink-badge">🍺 from {{ min_drink_price }} kr</span>
+          {% endif %}
         </div>
       </a>
       {% endfor %}
     {% else %}
-      <p class="empty">No restaurants found in this category.</p>
+      <p class="empty">No restaurants found{% if max_drink_price %} with drinks under {{ max_drink_price }} kr{% endif %}{% if active_categories %} in the selected categories{% endif %}.</p>
     {% endif %}
   </section>
 
