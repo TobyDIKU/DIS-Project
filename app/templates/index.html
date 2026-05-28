@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Restaurants — StudentDining{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Copenhagen Restaurants</h1>
+  <p class="subtitle">Student-friendly dining near University of Copenhagen</p>
+</div>
+
+<div class="index-layout">
+
+  <aside class="category-sidebar">
+    <h2>Categories</h2>
+    <ul>
+      <li>
+        <a href="{{ url_for('main.index') }}"
+           class="{% if not active_category %}active{% endif %}">
+          All
+        </a>
+      </li>
+      {% for cat in categories %}
+      <li>
+        <a href="{{ url_for('main.index', category=cat.id) }}"
+           class="{% if active_category == cat.id %}active{% endif %}">
+          {{ cat.name }}
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <section class="restaurant-grid">
+    {% if results %}
+      {% for restaurant, avg_rating, review_count in results %}
+      <a class="restaurant-card" href="{{ url_for('main.restaurant', id=restaurant.id) }}">
+        <div class="card-header">
+          <span class="category-badge">{{ restaurant.category.name }}</span>
+          <span class="price-tier">{{ 'kr ' * restaurant.price_tier }}</span>
+        </div>
+        <h3 class="card-name">{{ restaurant.name }}</h3>
+        <p class="card-address">{{ restaurant.address }}</p>
+        <div class="card-footer">
+          {% if avg_rating %}
+            <span class="stars">{{ '★' * avg_rating|int }}{{ '☆' * (5 - avg_rating|int) }}</span>
+            <span class="rating-text">{{ avg_rating }} ({{ review_count }})</span>
+          {% else %}
+            <span class="no-reviews">No reviews yet</span>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    {% else %}
+      <p class="empty">No restaurants found in this category.</p>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}

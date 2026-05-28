@@ -145,3 +145,318 @@ a:hover { text-decoration: underline; }
   font-size: .875rem;
   color: var(--text-muted);
 }
+
+/* ── Page header ────────────────────────────────────────── */
+.page-header { margin-bottom: 1.75rem; }
+.page-header h1 { font-size: 1.75rem; }
+.subtitle { color: var(--text-muted); margin-top: .25rem; }
+
+/* ── Index layout ───────────────────────────────────────── */
+.index-layout {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ── Category sidebar ───────────────────────────────────── */
+.category-sidebar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.category-sidebar h2 {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+  margin-bottom: .75rem;
+}
+
+.category-sidebar ul { list-style: none; }
+
+.category-sidebar li + li { margin-top: .25rem; }
+
+.category-sidebar a {
+  display: block;
+  padding: .35rem .6rem;
+  border-radius: var(--radius);
+  font-size: .9rem;
+  color: var(--text);
+  transition: background .12s;
+}
+.category-sidebar a:hover { background: var(--bg); text-decoration: none; }
+.category-sidebar a.active {
+  background: var(--ku-red);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── Restaurant card grid ───────────────────────────────── */
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.restaurant-card {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transition: box-shadow .15s, transform .15s;
+}
+.restaurant-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-badge {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--ku-red);
+  background: #f9eaea;
+  padding: .2rem .5rem;
+  border-radius: 99px;
+}
+
+.price-tier {
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.card-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: .25rem;
+}
+
+.card-address {
+  font-size: .82rem;
+  color: var(--text-muted);
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-top: auto;
+  padding-top: .5rem;
+  border-top: 1px solid var(--border);
+}
+
+.stars { color: #e6a817; letter-spacing: 1px; font-size: .85rem; }
+.rating-text { font-size: .8rem; color: var(--text-muted); }
+.no-reviews { font-size: .8rem; color: var(--text-muted); font-style: italic; }
+
+/* ── Restaurant detail ──────────────────────────────────── */
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: var(--text-muted);
+}
+.back-link:hover { color: var(--ku-red); }
+
+.restaurant-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.restaurant-hero h1 { font-size: 1.7rem; margin: .4rem 0 .5rem; }
+.restaurant-address { font-size: .9rem; color: var(--text-muted); }
+.restaurant-desc { margin-top: .6rem; font-size: .95rem; max-width: 55ch; }
+
+.hero-meta { text-align: right; flex-shrink: 0; }
+.price-tier-large { font-size: 1rem; font-weight: 700; color: var(--text-muted); margin-bottom: .5rem; }
+.avg-rating { display: flex; flex-direction: column; align-items: flex-end; gap: .2rem; }
+.stars-lg { color: #e6a817; font-size: 1.25rem; letter-spacing: 2px; }
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ── Menu ───────────────────────────────────────────────── */
+.menu-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+}
+
+.menu-section h2 { font-size: 1.2rem; margin-bottom: 1.25rem; }
+
+.menu-category + .menu-category { margin-top: 1.75rem; }
+.menu-category h3 {
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: .4rem;
+  margin-bottom: 1rem;
+}
+
+.meal-type-heading {
+  font-size: .8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--ku-red);
+  margin: 1rem 0 .5rem;
+}
+
+.item-list { list-style: none; display: flex; flex-direction: column; gap: .75rem; }
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.item-info { display: flex; flex-direction: column; gap: .2rem; }
+.item-name { font-weight: 600; font-size: .95rem; }
+.item-desc { font-size: .82rem; color: var(--text-muted); }
+
+.item-badges { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .2rem; }
+
+.badge {
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: .15rem .45rem;
+  border-radius: 99px;
+}
+.badge-vegan   { background: #e6f4e6; color: #2a6b2a; }
+.badge-veg     { background: #eef6e8; color: #3d7a2a; }
+.badge-allergen{ background: #fff4e0; color: #8a5700; }
+.badge-hot     { background: #fdecea; color: #8b1a1a; }
+.badge-alcohol { background: #f0eaf8; color: #5b2d8e; }
+.badge-vol     { background: #eef3fb; color: #2a4a8e; }
+
+.item-price {
+  font-weight: 700;
+  font-size: .95rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Reviews ────────────────────────────────────────────── */
+.reviews-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  box-shadow: var(--shadow);
+}
+
+.reviews-section h2 { font-size: 1.2rem; margin-bottom: 1.25rem; }
+
+.login-prompt {
+  font-size: .9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+/* ── Star picker ────────────────────────────────────────── */
+.review-form { margin-bottom: 1.75rem; border-bottom: 1px solid var(--border); padding-bottom: 1.75rem; }
+.review-form label {
+  display: block;
+  font-size: .8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--text-muted);
+  margin-bottom: .4rem;
+}
+.optional { font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+.star-picker {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: .1rem;
+  width: fit-content;
+  margin-bottom: 1rem;
+}
+.star-picker input { display: none; }
+.star-picker label {
+  font-size: 1.6rem;
+  color: #ccc;
+  cursor: pointer;
+  transition: color .1s;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.star-picker input:checked ~ label,
+.star-picker label:hover,
+.star-picker label:hover ~ label { color: #e6a817; }
+
+.review-form textarea {
+  display: block;
+  width: 100%;
+  padding: .55rem .75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: .9rem;
+  font-family: inherit;
+  background: var(--bg);
+  resize: vertical;
+  margin-bottom: .75rem;
+}
+.review-form textarea:focus { outline: none; border-color: var(--ku-red); }
+
+/* ── Review list ────────────────────────────────────────── */
+.review-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+
+.review-item {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.review-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: .3rem;
+  flex-wrap: wrap;
+}
+.review-author { font-weight: 700; font-size: .9rem; }
+.review-stars  { color: #e6a817; font-size: .85rem; }
+.review-date   { font-size: .78rem; color: var(--text-muted); margin-left: auto; }
+.review-comment { font-size: .9rem; color: var(--text); }
+
+.empty { color: var(--text-muted); font-style: italic; font-size: .9rem; }

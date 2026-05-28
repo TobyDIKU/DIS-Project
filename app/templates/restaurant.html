@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}{{ restaurant.name }} — StudentDining{% endblock %}
+
+{% block content %}
+<a class="back-link" href="{{ url_for('main.index') }}">← All restaurants</a>
+
+<div class="restaurant-hero">
+  <div>
+    <span class="category-badge">{{ restaurant.category.name }}</span>
+    <h1>{{ restaurant.name }}</h1>
+    <p class="restaurant-address">📍 {{ restaurant.address }}</p>
+    {% if restaurant.description %}
+      <p class="restaurant-desc">{{ restaurant.description }}</p>
+    {% endif %}
+  </div>
+  <div class="hero-meta">
+    <div class="price-tier-large">{{ 'kr ' * restaurant.price_tier }}</div>
+    {% if avg_rating %}
+      <div class="avg-rating">
+        <span class="stars-lg">{{ '★' * avg_rating|int }}{{ '☆' * (5 - avg_rating|int) }}</span>
+        <span>{{ avg_rating }} / 5 &nbsp;({{ reviews|length }} review{{ 's' if reviews|length != 1 }})</span>
+      </div>
+    {% else %}
+      <p class="no-reviews">No reviews yet — be the first!</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="detail-layout">
+
+  <section class="menu-section">
+    <h2>Menu</h2>
+
+    {% if food_groups %}
+    <div class="menu-category">
+      <h3>Food</h3>
+      {% for meal_type, items in food_groups %}
+      <h4 class="meal-type-heading">{{ meal_type|capitalize }}</h4>
+      <ul class="item-list">
+        {% for item in items %}
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">{{ item.name }}</span>
+            {% if item.description %}
+              <span class="item-desc">{{ item.description }}</span>
+            {% endif %}
+            <div class="item-badges">
+              {% if item.is_vegan %}<span class="badge badge-vegan">Vegan</span>{% endif %}
+              {% if item.is_vegetarian and not item.is_vegan %}<span class="badge badge-veg">Vegetarian</span>{% endif %}
+              {% if item.allergens %}<span class="badge badge-allergen">{{ item.allergens }}</span>{% endif %}
+            </div>
+          </div>
+          <span class="item-price">{{ item.price_dkk }} kr</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if beverages %}
+    <div class="menu-category">
+      <h3>Beverages</h3>
+      <ul class="item-list">
+        {% for item in beverages %}
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">{{ item.name }}</span>
+            {% if item.description %}
+              <span class="item-desc">{{ item.description }}</span>
+            {% endif %}
+            <div class="item-badges">
+              {% if item.is_hot %}<span class="badge badge-hot">Hot</span>{% endif %}
+              {% if item.is_alcoholic %}<span class="badge badge-alcohol">Alcoholic</span>{% endif %}
+              {% if item.volume_ml %}<span class="badge badge-vol">{{ item.volume_ml }} ml</span>{% endif %}
+            </div>
+          </div>
+          <span class="item-price">{{ item.price_dkk }} kr</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if not food_groups and not beverages %}
+      <p class="empty">No menu items listed yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="reviews-section">
+    <h2>Reviews</h2>
+
+    {% if current_user.is_authenticated %}
+    <form class="review-form" method="post" action="{{ url_for('main.post_review', id=restaurant.id) }}">
+      <label>Your rating</label>
+      <div class="star-picker">
+        {% for i in range(5, 0, -1) %}
+        <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" required>
+        <label for="star{{ i }}">★</label>
+        {% endfor %}
+      </div>
+      <label for="comment">Comment <span class="optional">(optional)</span></label>
+      <textarea id="comment" name="comment" rows="3" placeholder="What did you think?"></textarea>
+      <button class="btn btn-primary" type="submit">Submit review</button>
+    </form>
+    {% else %}
+    <p class="login-prompt"><a href="{{ url_for('auth.login') }}">Log in</a> to leave a review.</p>
+    {% endif %}
+
+    {% if reviews %}
+    <ul class="review-list">
+      {% for review in reviews %}
+      <li class="review-item">
+        <div class="review-header">
+          <span class="review-author">{{ review.user.username }}</span>
+          <span class="review-stars">{{ '★' * review.rating }}{{ '☆' * (5 - review.rating) }}</span>
+          <span class="review-date">{{ review.created_at.strftime('%d %b %Y') }}</span>
+        </div>
+        {% if review.comment %}
+          <p class="review-comment">{{ review.comment }}</p>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      <p class="empty">No reviews yet.</p>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}
