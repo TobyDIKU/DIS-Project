@@ -19,6 +19,11 @@ def create_app():
 
     # Import models so Alembic autogenerate can see them
     from app import models  # noqa: F401
+    from app.models import User
+
+    @login_manager.user_loader
+    def load_user(user_id: str):
+        return db.session.get(User, int(user_id))
 
     from app.auth import auth_bp
     from app.routes import main_bp
