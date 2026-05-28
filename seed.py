@@ -402,11 +402,11 @@ RESTAURANT_DATA = [
 ]
 
 DEMO_USERS = [
-    ("alice",   "alice@alumni.ku.dk",   "password123"),
-    ("bob",     "bob@alumni.ku.dk",     "password123"),
-    ("charlie", "charlie@alumni.ku.dk", "password123"),
-    ("diana",   "diana@alumni.ku.dk",   "password123"),
-    ("erik",    "erik@alumni.ku.dk",    "password123"),
+    ("alice",   "alc123@alumni.ku.dk", "password123"),
+    ("bob",     "bob456@alumni.ku.dk", "password123"),
+    ("charlie", "chr789@alumni.ku.dk", "password123"),
+    ("diana",   "din012@alumni.ku.dk", "password123"),
+    ("erik",    "erk345@alumni.ku.dk", "password123"),
 ]
 
 REVIEW_COMMENTS = [

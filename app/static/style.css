@@ -139,6 +139,8 @@ a:hover { text-decoration: underline; }
 
 .auth-card .btn { margin-top: 1.5rem; }
 
+.field-hint { display: block; font-size: .78rem; color: var(--text-muted); margin-top: .25rem; margin-bottom: .75rem; }
+
 .auth-footer {
   margin-top: 1.25rem;
   text-align: center;

@@ -1,3 +1,5 @@
+import re
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
@@ -20,8 +22,16 @@ def register():
             flash("All fields are required.", "error")
             return render_template("register.html")
 
-        if not email.endswith("@alumni.ku.dk"):
-            flash("Only @alumni.ku.dk email addresses are allowed.", "error")
+        if not re.fullmatch(r"[a-z]{3}[0-9]{3}@alumni\.ku\.dk", email):
+            flash("Email must be 3 lowercase letters followed by 3 digits, e.g. rkn812@alumni.ku.dk.", "error")
+            return render_template("register.html")
+
+        if not re.fullmatch(r"[a-zA-Z0-9_]{3,20}", username):
+            flash("Username must be 3–20 characters and contain only letters, digits, or underscores.", "error")
+            return render_template("register.html")
+
+        if not re.fullmatch(r"(?=.*\d).{8,}", password):
+            flash("Password must be at least 8 characters and contain at least one digit.", "error")
             return render_template("register.html")
 
         user = User(
