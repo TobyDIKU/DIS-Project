@@ -58,3 +58,12 @@ Regex (`re.fullmatch`) is used in `app/auth.py` to validate registration input �
 | `beverage` | Drinks with alcohol/hot/volume metadata |
 | `user` | Registered students |
 | `review` | Star ratings and comments, one per user per restaurant |
+
+## Interaction Instructions
+
+1. **Browse** — open http://127.0.0.1:5000 to see all 100 restaurants. Each card shows the average rating, review count, and cheapest alcoholic drink price.
+2. **Filter & sort** — narrow the list by category (Asian, Italian, Café, …) and by drink price (under 30/40/50 kr), and sort by name (A–Z) or rating (high↔low).
+3. **View a restaurant** — click a restaurant to see its menu grouped by meal type, beverages with badges (Vegan, Vegetarian, Allergens, Hot, Alcoholic, Volume), and its reviews (filterable by stars and recency).
+4. **Log in / register** — sign in with a demo account from the table above, or register a new `@alumni.ku.dk` account from the navbar.
+5. **Post a review** — once logged in, give a restaurant a 1–5 star rating and an optional comment. One review per user per restaurant.
+6. **Log out** — via the navbar button.
