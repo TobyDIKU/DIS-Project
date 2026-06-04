@@ -37,11 +37,11 @@ App runs at http://127.0.0.1:5000
 
 | Email | Password |
 |---|---|
-| alice@alumni.ku.dk | password123 |
-| bob@alumni.ku.dk | password123 |
-| charlie@alumni.ku.dk | password123 |
-| diana@alumni.ku.dk | password123 |
-| erik@alumni.ku.dk | password123 |
+| alc123@alumni.ku.dk | password123 |
+| bob456@alumni.ku.dk | password123 |
+| chr789@alumni.ku.dk | password123 |
+| din012@alumni.ku.dk | password123 |
+| erk345@alumni.ku.dk | password123 |
 
 Registration is restricted to `@alumni.ku.dk` email addresses.
 
