@@ -45,6 +45,8 @@ App runs at http://127.0.0.1:5000
 
 Registration is restricted to `@alumni.ku.dk` email addresses.
 
+Regex (`re.fullmatch`) is used in `app/auth.py` to validate registration input — the email format (3 letters + 3 digits `@alumni.ku.dk`), username (3-20 chars and only certain characters) and password strength (minimum 8 chars + 1 digit).
+
 ## Database schema
 
 | Table | Description |
