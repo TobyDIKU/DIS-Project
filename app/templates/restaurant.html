@@ -6,7 +6,9 @@
 
 <div class="restaurant-hero">
   <div>
-    <span class="category-badge">{{ restaurant.category.name }}</span>
+    <span class="category-badges">
+      {% for cat in restaurant.categories %}<span class="category-badge">{{ cat.name }}</span>{% endfor %}
+    </span>
     <h1>{{ restaurant.name }}</h1>
     <p class="restaurant-address">📍 {{ restaurant.address }}</p>
     {% if restaurant.description %}

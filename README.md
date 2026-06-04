@@ -53,6 +53,7 @@ Regex (`re.fullmatch`) is used in `app/auth.py` to validate registration input �
 |---|---|
 | `category` | Restaurant categories (Asian, Italian, Café, …) |
 | `restaurant` | 100 Copenhagen restaurants with address and price tier |
+| `restaurant_category` | Join table — a restaurant can belong to many categories and vice versa |
 | `item` | Parent table for menu items (ISA hierarchy) |
 | `food_item` | Food items with dietary info and meal type |
 | `beverage` | Drinks with alcohol/hot/volume metadata |

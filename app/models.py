@@ -19,6 +19,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app import db
 
 
+# Many-to-many association between restaurants and categories.
+restaurant_category = db.Table(
+    "restaurant_category",
+    db.Column("restaurant_id", ForeignKey("restaurant.id"), primary_key=True),
+    db.Column("category_id", ForeignKey("category.id"), primary_key=True),
+)
+
+
 class Category(db.Model):
     __tablename__ = "category"
 
@@ -26,7 +34,9 @@ class Category(db.Model):
     name: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text)
 
-    restaurants: Mapped[list["Restaurant"]] = relationship(back_populates="category")
+    restaurants: Mapped[list["Restaurant"]] = relationship(
+        secondary=restaurant_category, back_populates="categories"
+    )
 
 
 class Restaurant(db.Model):
@@ -38,8 +48,9 @@ class Restaurant(db.Model):
     description: Mapped[Optional[str]] = mapped_column(Text)
     price_tier: Mapped[int] = mapped_column(SmallInteger, nullable=False)  # 1–3
 
-    category_id: Mapped[int] = mapped_column(ForeignKey("category.id"), nullable=False)
-    category: Mapped["Category"] = relationship(back_populates="restaurants")
+    categories: Mapped[list["Category"]] = relationship(
+        secondary=restaurant_category, back_populates="restaurants"
+    )
 
     items: Mapped[list["Item"]] = relationship(back_populates="restaurant")
     reviews: Mapped[list["Review"]] = relationship(back_populates="restaurant")

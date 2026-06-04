@@ -4,6 +4,7 @@ from flask import Blueprint, abort, flash, redirect, render_template, request, u
 from flask_login import current_user, login_required
 from sqlalchemy import func, nullslast
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload
 
 from app import db
 from app.models import Beverage, Category, FoodItem, Item, Restaurant, Review
@@ -26,6 +27,7 @@ def index():
     raw_max_drink = request.args.get("max_drink", type=int)
     max_drink_price = raw_max_drink if raw_max_drink in DRINK_PRICE_THRESHOLDS else None
     active_sort = request.args.get("sort") if request.args.get("sort") in ("rating_desc", "rating_asc") else None
+    cat_mode = "and" if request.args.get("cat_mode") == "and" else "or"
 
     avg_sub = (
         db.select(
@@ -57,6 +59,7 @@ def index():
         )
         .outerjoin(avg_sub, Restaurant.id == avg_sub.c.restaurant_id)
         .outerjoin(min_drink_sub, Restaurant.id == min_drink_sub.c.restaurant_id)
+        .options(selectinload(Restaurant.categories))
     )
 
     if active_sort == "rating_desc":
@@ -67,7 +70,13 @@ def index():
         query = query.order_by(Restaurant.name)
 
     if active_categories:
-        query = query.where(Restaurant.category_id.in_(active_categories))
+        if cat_mode == "and":
+            # Restaurant must belong to *every* selected category.
+            for cat_id in active_categories:
+                query = query.where(Restaurant.categories.any(Category.id == cat_id))
+        else:
+            # Restaurant must belong to *any* selected category (default).
+            query = query.where(Restaurant.categories.any(Category.id.in_(active_categories)))
 
     if max_drink_price:
         query = query.where(min_drink_sub.c.min_drink_price <= max_drink_price)
@@ -79,6 +88,7 @@ def index():
         results=results,
         categories=categories,
         active_categories=active_categories,
+        cat_mode=cat_mode,
         max_drink_price=max_drink_price,
         drink_thresholds=DRINK_PRICE_THRESHOLDS,
         active_sort=active_sort,

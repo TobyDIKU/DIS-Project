@@ -401,6 +401,22 @@ RESTAURANT_DATA = [
     ("Plant Power",      "Istedgade 60, 1650 København V",       "Fast-casual vegan with burgers, wraps and shakes.", 1, "Vegan"),
 ]
 
+# Additional categories per restaurant (beyond its primary category above).
+# The primary category drives the generated menu; these extra tags demonstrate
+# the many-to-many relationship — a restaurant can belong to several categories.
+EXTRA_CATEGORIES = {
+    "Green Garden":      ["Nordic"],          # Vegan + Nordic
+    "Grønne Kælder":     ["Vegan"],           # vegetable-forward Nordic kitchen
+    "Morgenstedet":      ["Vegan"],           # plant-based Nordic lunch spot
+    "Sprout":            ["Café"],            # vegan café with brunch
+    "Bowl Bar":          ["Café"],
+    "Plant Power":       ["Fast Food"],       # vegan fast-casual
+    "Vegan Street Food": ["Fast Food"],
+    "Falafel Brothers":  ["Middle Eastern"],
+    "Kebabistan":        ["Middle Eastern"],
+    "Wok & Roll":        ["Fast Food"],       # Asian street food
+}
+
 DEMO_USERS = [
     ("alice",   "alc123@alumni.ku.dk", "password123"),
     ("bob",     "bob456@alumni.ku.dk", "password123"),
@@ -463,8 +479,10 @@ def seed() -> None:
             address=address,
             description=description,
             price_tier=price_tier,
-            category=cat_objects[cat_name],
         )
+        r.categories = [cat_objects[cat_name]] + [
+            cat_objects[extra] for extra in EXTRA_CATEGORIES.get(name, [])
+        ]
         db.session.add(r)
 
         multiplier = PRICE_MULTIPLIER[price_tier]
